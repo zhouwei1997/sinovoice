@@ -15,14 +15,15 @@ fi
 echo "$(date +%H:%M:%S) 开始检测服务进程" >> ${BASE_DIR}/check_freeswitch_$(date +%Y-%m-%d).log
 # 检测freeswitch的进程是否存在
 if [ $(ps aux | grep -v grep | grep -w freeswitch | wc -l) -eq 0 ];then
-   echo "$(date +%H:%M:%S) freeswitch 服务进程不存在，现在去启动freeswitch进程" >> ${BASE_DIR}/check_freeswitch_$(date +%Y-%m-%d).log
-   cd /usr/local/freeswitch/bin
-   ./freeswitch -nonat -nc
-   if [ $(ps aux | grep -v grep | grep -w freeswitch | wc -l) -eq 1 ];then
-      echo "$(date +%H:%M:%S) freeswitch服务启动成功" >> ${BASE_DIR}/check_freeswitch_$(date +%Y-%m-%d).log
-   else
-     echo "$(date +%H:%M:%S) freeswitch 服务启动失败，请查看日志并手动启动 freeswitch 服务" >> ${BASE_DIR}/check_freeswitch_$(date +%Y-%m-%d).log
-   fi
+  echo "$(date +%H:%M:%S) freeswitch 服务进程不存在，现在去启动freeswitch进程" >> ${BASE_DIR}/check_freeswitch_$(date +%Y-%m-%d).log
+  cd /usr/local/freeswitch/bin
+  ./freeswitch -nonat -nc
+  sleep 60
+  if [ $(ps aux | grep -v grep | grep -w freeswitch | wc -l) -eq 1 ];then
+    echo "$(date +%H:%M:%S) freeswitch服务启动成功" >> ${BASE_DIR}/check_freeswitch_$(date +%Y-%m-%d).log
+  else
+    echo "$(date +%H:%M:%S) freeswitch 服务启动失败，请查看日志并手动启动 freeswitch 服务" >> ${BASE_DIR}/check_freeswitch_$(date +%Y-%m-%d).log
+  fi
 else
   echo "$(date +%H:%M:%S) freeswitch 服务正常" >> ${BASE_DIR}/check_freeswitch_$(date +%Y-%m-%d).log
 fi

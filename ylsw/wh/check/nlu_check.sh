@@ -60,7 +60,7 @@ for i in zookeeper activemq servicefx_license_server servicefx_http_server servi
       if [ $(ps -ef | grep -v grep | grep -w servicefx_slb) -eq 1 ];then
         echo "$(date +%Y-%m-%d) $(date +%H:%M:%S) slb 服务启动成功" >> ${BASE_DIR}/check_$(date +%Y-%m-%d).log
       else
-         echo "$(date +%Y-%m-%d) $(date +%H:%M:%S) slb 服务启动失败，请查看日志并手动启动 slb 服务" >> ${BASE_DIR}/check_$(date +%Y-%m-%d).log
+        echo "$(date +%Y-%m-%d) $(date +%H:%M:%S) slb 服务启动失败，请查看日志并手动启动 slb 服务" >> ${BASE_DIR}/check_$(date +%Y-%m-%d).log
       fi
     elif [ $i == "servicefx_nlu" ]; then
       cd ${CLOUD_DIR}/nlu/bin
