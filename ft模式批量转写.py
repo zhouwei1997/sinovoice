@@ -28,34 +28,37 @@ class RealTimeTranscription:
 
     def get_token(self):
         """获取token"""
-        token_url = "https://" + base_url + "/v10/auth/get-access-token?appkey=aicp_app"
+        url = "https://" + base_url + "/v10/auth/get-access-token?appkey=aicp_app"
         payload = {}
         headers = {
             'Authorization': 'Basic YWljcF9hcHA6UVd4aFpHUnBianB2Y0dWdUlITmxjMkZ0WlE='}
         global token
         token = requests.request(
             "GET",
-            token_url,
+            url,
             headers=headers,
             data=payload,
             verify=False).json()['token']
         print("获取的token值：" + token)
-        print("获取token的url：" + token_url)
+        print("获取token的url：" + url)
 
     def transliteration_betys(self):
         """
         二进制流
         :return:
         """
-        ft_url = "http://" + base_url + "/v10/asr/freetalk/" + \
-                 ASR_property + "/short_audio?appkey=aicp_app"
+        url = "http://" + base_url + "/v10/asr/freetalk/" + \
+              ASR_property + "/short_audio?appkey=aicp_app"
         print("transliteration_bytes中的token值：" + token)
+        """
+        @udioFormat 音频格式
+        @addPunc= 是否输出标点
+        @outputPInyin 是否输出拼音
+        """
         headers = {
             'X-Hci-Access-Token': token,
             'X-AICloud-Config': 'audioFormat=auto,addPunc=true,outputPInyin=False',
-            'Content-Type': 'application/octet-stream'
-            # 'Content-Type': 'application/json'
-        }
+            'Content-Type': 'application/octet-stream'}
 
         """
         读取指定目录下的文件，并将文件名和转写后的文本写入txt文本中
@@ -78,7 +81,7 @@ class RealTimeTranscription:
                     payload = open(file_path + file_name, "rb").read()
                     response = requests.request(
                         "POST",
-                        ft_url,
+                        url,
                         headers=headers,
                         data=payload)
                     print(response.json())
@@ -91,8 +94,8 @@ class RealTimeTranscription:
         json格式
         :return:
         """
-        ft_url = "http://" + base_url + "/v10/asr/freetalk/" + \
-                 ASR_property + "/short_audio?appkey=aicp_app"
+        url = "http://" + base_url + "/v10/asr/freetalk/" + \
+              ASR_property + "/short_audio?appkey=aicp_app"
         print("transliteration_json中的token值：" + token)
         headers = {
             'X-Hci-Access-Token': token,
@@ -121,7 +124,8 @@ class RealTimeTranscription:
                     2、使用 read() 读取录音文件中的内容
                     3、通过解密为 utf-8 的格式
                     """
-                    audio_file = base64.b64encode(open(file_path + file_name, "rb").read()).decode("UTF-8")
+                    audio_file = base64.b64encode(
+                        open(file_path + file_name, "rb").read()).decode("UTF-8")
                     # 将 str 类型的 audio_file 组装成字典类型
                     audio_data = {
                         "config": {
@@ -131,7 +135,7 @@ class RealTimeTranscription:
                     # 转换 dict 类型的 audio_data 为 json 格式
                     payload = json.dumps(audio_data)
                     response = requests.request(
-                        "POST", ft_url, headers=headers, data=payload)
+                        "POST", url, headers=headers, data=payload)
                     print(response.json())
                     file.writelines(file_name + "\t")
                     file.writelines(response.json()['result']['text'] + "\n")
@@ -142,4 +146,3 @@ if __name__ == '__main__':
     asr = RealTimeTranscription()
     asr.get_token()
     asr.transliteration_betys()
-    # asr.transliteration_json()
