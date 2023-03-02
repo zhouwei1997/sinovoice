@@ -5,10 +5,13 @@
 
 """
 asr_ft 批量录音转写
+音频文件的时长只能在一分钟之内
 """
 import base64
+import contextlib
 import json
 import os
+import wave
 
 import requests
 
@@ -41,6 +44,18 @@ class RealTimeTranscription:
             verify=False).json()['token']
         print("获取的token值：" + token)
         print("获取token的url：" + url)
+
+    def GetAudioTime(self, file_path):
+        """
+        获取音频时长
+        :param file_path: 音频文件路径
+        :return:
+        """
+        with contextlib.closing(wave.open(file_path, 'rb')) as f:
+            frames = f.getnframes()
+            rate = f.getframerate()
+            duration = frames / float(rate)
+        return duration
 
     def transliteration_betys(self):
         """
