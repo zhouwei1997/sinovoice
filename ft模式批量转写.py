@@ -9,6 +9,7 @@ asr_ft 批量录音转写
 """
 import base64
 import contextlib
+import datetime
 import json
 import os
 import wave
@@ -62,6 +63,7 @@ class RealTimeTranscription:
         二进制流
         :return:
         """
+        start_time = datetime.datetime.now()
         url = "http://" + base_url + "/v10/asr/freetalk/" + \
               ASR_property + "/short_audio?appkey=aicp_app"
         print("transliteration_bytes中的token值：" + token)
@@ -115,13 +117,17 @@ class RealTimeTranscription:
                         error = error + 1
                         continue
                 file.close()
+        end_time = datetime.datetime.now()
+        print(f'转写耗时：{(end_time - start_time).seconds}')
         with open(transliteration_path, "a") as file:
             file.writelines("本次转写文件：" + str(success + error) + "个" + "\n")
             file.writelines("成功：" + str(success) + "个" + "\n")
             file.writelines("失败：" + str(error) + "个" + "\n")
+            file.writelines("本次转写共耗时：" + str((end_time - start_time).seconds) + "秒" + "\n")
         file.close()
 
     def transliteration_json(self):
+        start_time = datetime.datetime.now()
         """
         json格式
         :return:
@@ -182,11 +188,14 @@ class RealTimeTranscription:
                         file.writelines("ERROR：音频文件时长超过一分钟，无法转写" + "\n")
                         error = error + 1
                     continue
-            file.close()
+                file.close()
+        end_time = datetime.datetime.now()
+        print(f'转写耗时：{(end_time - start_time).seconds}')
         with open(transliteration_path, "a") as file:
             file.writelines("本次转写文件：" + str(success + error) + "个" + "\n")
             file.writelines("成功：" + str(success) + "个" + "\n")
             file.writelines("失败：" + str(error) + "个" + "\n")
+            file.writelines("本次转写共耗时：" + str((end_time - start_time).seconds) + "秒" + "\n")
         file.close()
 
 
