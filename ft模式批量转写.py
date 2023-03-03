@@ -22,7 +22,7 @@ ASR_property = "cn_8k_common"
 # 文件路径
 file_path = "C:/Users/Maxzzz/Desktop/2-1录音/"
 # 文本转写后的txt路径
-transliteration_path = "test.txt"
+transliteration_path = "C:/Users/Maxzzz/Desktop/2-1录音/转写-json.txt"
 # 获取token值
 token = None
 
@@ -88,6 +88,8 @@ class RealTimeTranscription:
             """
             file_name：录音文件名
             """
+        success = 0
+        error = 0
         for file_name in path_name:
             with open(transliteration_path, "a") as file:
                 # print("transliteration_path:" + transliteration_path)
@@ -101,14 +103,31 @@ class RealTimeTranscription:
                         data=payload)
                     print(response.json())
                     file.writelines(file_name + "\t")
-                    file.writelines(response.json()['result']['text'] + "\n")
-            file.close()
+                    """
+                    如果音频时长超过一分钟，则跳过该音频文件，执行下一个音频
+                    """
+                    try:
+                        file.writelines(
+                            response.json()['result']['text'] + "\n")
+                        success = success + 1
+                    except Exception:
+                        file.writelines("ERROR：音频文件时长超过一分钟，无法转写" + "\n")
+                        error = error + 1
+                        continue
+                file.close()
+        with open(transliteration_path, "a") as file:
+            file.writelines("本次转写文件：" + str(success + error) + "个" + "\n")
+            file.writelines("成功：" + str(success) + "个" + "\n")
+            file.writelines("失败：" + str(error) + "个" + "\n")
+        file.close()
 
     def transliteration_json(self):
         """
         json格式
         :return:
         """
+        success = 0
+        error = 0
         url = "http://" + base_url + "/v10/asr/freetalk/" + \
               ASR_property + "/short_audio?appkey=aicp_app"
         print("transliteration_json中的token值：" + token)
@@ -153,11 +172,26 @@ class RealTimeTranscription:
                         "POST", url, headers=headers, data=payload)
                     print(response.json())
                     file.writelines(file_name + "\t")
-                    file.writelines(response.json()['result']['text'] + "\n")
+                    """
+                    如果音频时长超过一分钟，则跳过该音频文件，执行下一个音频
+                    """
+                    try:
+                        file.writelines(response.json()['result']['text'] + "\n")
+                        success = success + 1
+                    except Exception:
+                        file.writelines("ERROR：音频文件时长超过一分钟，无法转写" + "\n")
+                        error = error + 1
+                    continue
             file.close()
+        with open(transliteration_path, "a") as file:
+            file.writelines("本次转写文件：" + str(success + error) + "个" + "\n")
+            file.writelines("成功：" + str(success) + "个" + "\n")
+            file.writelines("失败：" + str(error) + "个" + "\n")
+        file.close()
 
 
 if __name__ == '__main__':
     asr = RealTimeTranscription()
     asr.get_token()
-    asr.transliteration_betys()
+    # asr.transliteration_betys()
+    asr.transliteration_json()
