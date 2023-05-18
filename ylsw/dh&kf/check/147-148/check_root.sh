@@ -2,7 +2,7 @@
 
 # root执行，在定时任务中配置每15分钟执行一次
 # 检查root用户启动的fastdfs的任务进程
-# */15 * * * * bash /app/check/check_root.sh
+# */10 * * * * bash /app/check/check_root.sh
 
 BASE_DIR=/app/check/logs
 
@@ -10,6 +10,7 @@ BASE_DIR=/app/check/logs
 if [ ! -d "${BASE_DIR}" ]; then
     mkdir -p ${BASE_DIR}
     chown -R hcicloud:hcicloud ${BASE_DIR}
+    chmod 777 ${BASE_DIR}
 fi
 
 source /etc/profile
@@ -31,7 +32,7 @@ for i in fdfs_trackerd fdfs_storaged; do
     fi
 done
 
-echo "------- $(date +%Y-%m-%d) $(date +%H:%M:%S) all servers is checked -------" >>/app/check/logs/check_$(date +%Y-%m-%d).log
+echo "------- $(date +%Y-%m-%d) $(date +%H:%M:%S) all servers is checked -------" >>${BASE_DIR}/check_root_$(date +%Y-%m-%d).log
 
 echo "========================================================================================================================="
 
