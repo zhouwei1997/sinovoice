@@ -6,10 +6,20 @@
 # 3、检查ros是否启动， ros启动，检查有几个ros进程，存在一个，则启动ta，否则重启ros
 # 4、启动ta,检查有几个ta,一个ta,启动完成，大于一个  重启ta
 
+
+source /hcicloud/.bash_profile
+BASE_DIR=/app/check/logs
+CLOUD_DIR=/hcicloud_ta/cloud
+
+# 判断logs目录是否存在，不存在则新建
+if [ ! -d "${BASE_DIR}" ]; then
+    mkdir -p ${BASE_DIR}
+fi
+
 if [ $(ps aux | grep -v grep | grep -i fdfs_tracker) -eq 1 ];then 
     echo "tracker 进程正常。。。。。检查stroage进程"
     if [ $(ps aux | grep -v grep | grep -i fdfs_storage) -eq 1 ];then 
-        echo "storage 进程正常。。。。。"
+        echo "storage 进程正常。。。。。" >> ${BASE_DIR}/check_ta_$(date +%Y-%m-%d).log
         # 启动ROS
         while [ $(ps aux | grep -v grep | grep -i servicefx_ros) -ne 1 ]
         do 
@@ -25,7 +35,7 @@ if [ $(ps aux | grep -v grep | grep -i fdfs_tracker) -eq 1 ];then
                 sleep 30
             fi
         done
-        # 启动TA
+        # 启动TA 
         while [ $(ps aux | grep -v grep | grep -i servicefx_ros) -ne 1 ] 
         do
             if [ $(ps aux | grep -v grep | grep -i servicefx_ros) -eq 0 ];then
