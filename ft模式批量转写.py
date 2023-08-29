@@ -18,12 +18,16 @@ import requests
 # 请求地址
 # base_url格式 ip:port
 base_url = "www.callcent.chinaums.com"
+# license_port = "22801"
+# port = "22800"
 # ASR模型
 ASR_property = "cn_8k_common"
 # 文件路径
-file_path = "C:/Users/Maxzzz/Desktop/2-1录音/"
+file_path = "C:/Users/Maxzzz/Desktop/test/"
+environment = "测试"
 # 文本转写后的txt路径
-transliteration_path = file_path + time.strftime("%Y-%m-%d") + ".txt"
+transliteration_path = file_path + environment + "-" + time.strftime("%Y-%m-%d") + ":" + time.strftime(
+    "%H-%M-%S") + ".txt"
 # 获取token值
 token = None
 
@@ -37,6 +41,8 @@ class RealTimeTranscription:
         """
 
         url = "https://" + base_url + "/v10/auth/get-access-token?appkey=aicp_app"
+        # url = "https://" + base_url + ":" + license_port + "/v10/auth/get-access-token?appkey=aicp_app"
+        print(url)
         payload = {}
         headers = {
             'Authorization': 'Basic YWljcF9hcHA6UVd4aFpHUnBianB2Y0dWdUlITmxjMkZ0WlE='}
@@ -60,6 +66,8 @@ class RealTimeTranscription:
         # 端口：22800
         url = "http://" + base_url + "/v10/asr/freetalk/" + \
               ASR_property + "/short_audio?appkey=aicp_app"
+        # url = "http://" + base_url + ":" + port + "/v10/asr/freetalk/" + ASR_property + "/short_audio?appkey=aicp_app"
+        print(url)
         print("transliteration_bytes中的token值：" + token)
         """
         @udioFormat 音频格式
